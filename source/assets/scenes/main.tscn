@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://ditjm1bpqrtit"]
+
+[ext_resource type="PackedScene" uid="uid://bmdd22p4jk642" path="res://source/assets/scenes/node_3d.tscn" id="1_j1wtg"]
+
+[node name="Node" type="Node" unique_id=576763711]
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=639465957]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=55370260]
+handle_input_locally = false
+size = Vector2i(1920, 1080)
+render_target_update_mode = 4
+
+[node name="Node3D" parent="SubViewportContainer/SubViewport" unique_id=64685377 instance=ExtResource("1_j1wtg")]
+
+[node name="Control" type="Control" parent="." unique_id=1383071618]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Control" unique_id=110334028]
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="Control/CanvasLayer" unique_id=1636471892]
+offset_right = 40.0
+offset_bottom = 40.0

@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://7vbpg5x4dql4"]
+
+[ext_resource type="Script" uid="uid://cgt7s0e0nmuvm" path="res://source/assets/scripts/attack_data.gd" id="1_erenn"]
+[ext_resource type="PackedScene" uid="uid://dvl2khe7d0fgv" path="res://source/assets/scenes/projectile.tscn" id="2_pc26u"]
+[ext_resource type="Script" uid="uid://borax688mgxlj" path="res://source/assets/scripts/enemy_data.gd" id="2_rk2ro"]
+
+[sub_resource type="Resource" id="Resource_bbf8c"]
+script = ExtResource("1_erenn")
+damage = 20.0
+cooldown = 1.5
+metadata/_custom_type_script = "uid://cgt7s0e0nmuvm"
+
+[sub_resource type="Resource" id="Resource_imewr"]
+script = ExtResource("1_erenn")
+attack_name = "Gunshot"
+attack_type = "ranged"
+damage = 20.0
+max_range = 15.0
+cooldown = 3.0
+projectile_scene = ExtResource("2_pc26u")
+metadata/_custom_type_script = "uid://cgt7s0e0nmuvm"
+
+[resource]
+script = ExtResource("2_rk2ro")
+display_name = "Soldier"
+max_health = 200.0
+speed = 2.0
+attacks = Array[ExtResource("1_erenn")]([SubResource("Resource_bbf8c"), SubResource("Resource_imewr")])
+metadata/_custom_type_script = "uid://borax688mgxlj"

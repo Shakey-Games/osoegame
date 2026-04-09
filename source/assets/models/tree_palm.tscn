@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://ce7neim5kkdvn"]
+
+[ext_resource type="PackedScene" uid="uid://by8mgw7orowkb" path="res://source/assets/models/kenney_nature-kit/Models/FBX format/tree_palm.fbx" id="1_fgetp"]
+
+[node name="tree_palm" unique_id=2097710157 instance=ExtResource("1_fgetp")]
+transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, 0, 0, 0)

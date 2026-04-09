@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://wr01ldrle1o0"]
+
+[ext_resource type="Script" uid="uid://brbr3qgcc27j" path="res://source/assets/scripts/base_enemy.gd" id="1_n2gvv"]
+[ext_resource type="Resource" uid="uid://cc12d1cyk21ng" path="res://source/assets/resources/grunt.tres" id="2_sduth"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_n2gvv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l2x3w"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0, 0, 0, 1)
+border_blend = true
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_722r7"]
+bg_color = Color(0, 1, 0, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0, 0, 0, 1)
+border_blend = true
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_l2x3w"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n2gvv"]
+albedo_color = Color(0, 1, 1, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sduth"]
+material = SubResource("StandardMaterial3D_n2gvv")
+
+[node name="Grunt" type="CharacterBody3D" unique_id=634020217]
+collision_layer = 2
+collision_mask = 9
+script = ExtResource("1_n2gvv")
+enemy_data = ExtResource("2_sduth")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=434747438]
+shape = SubResource("BoxShape3D_n2gvv")
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=396557235]
+transparent_bg = true
+size = Vector2i(257, 21)
+size_2d_override_stretch = true
+
+[node name="HealthBar" type="ProgressBar" parent="SubViewport" unique_id=1134876138]
+offset_right = 256.0
+offset_bottom = 20.0
+theme_override_styles/background = SubResource("StyleBoxFlat_l2x3w")
+theme_override_styles/fill = SubResource("StyleBoxFlat_722r7")
+value = 100.0
+show_percentage = false
+
+[node name="HealthSprite" type="Sprite3D" parent="." unique_id=894017893]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.377097, 0)
+billboard = 1
+texture_filter = 0
+texture = SubResource("ViewportTexture_l2x3w")
+
+[node name="VisualContainer" type="Node3D" parent="." unique_id=1261298899]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="VisualContainer" unique_id=340024507]
+mesh = SubResource("BoxMesh_sduth")

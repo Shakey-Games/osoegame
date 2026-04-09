@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://cc12d1cyk21ng"]
+
+[ext_resource type="Script" uid="uid://cgt7s0e0nmuvm" path="res://source/assets/scripts/attack_data.gd" id="1_1wgme"]
+[ext_resource type="Script" uid="uid://borax688mgxlj" path="res://source/assets/scripts/enemy_data.gd" id="2_6fsc0"]
+
+[sub_resource type="Resource" id="Resource_bbf8c"]
+script = ExtResource("1_1wgme")
+cooldown = 2.0
+metadata/_custom_type_script = "uid://cgt7s0e0nmuvm"
+
+[resource]
+script = ExtResource("2_6fsc0")
+display_name = "Grunt"
+attacks = Array[ExtResource("1_1wgme")]([SubResource("Resource_bbf8c")])
+metadata/_custom_type_script = "uid://borax688mgxlj"

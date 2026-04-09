@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://kdlfml65rx3m"]
+
+[sub_resource type="Gradient" id="Gradient_fsnft"]
+colors = PackedColorArray(1, 0, 0, 1, 0.80158246, 0.37173903, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_0cxpc"]
+gradient = SubResource("Gradient_fsnft")
+
+[sub_resource type="Curve" id="Curve_py4a2"]
+_limits = [0.0, 4.0, 0.0, 1.0]
+_data = [Vector2(0.015686281, 4), 0.0, 0.146358, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_e84yh"]
+curve = SubResource("Curve_py4a2")
+
+[sub_resource type="Curve" id="Curve_u37ga"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_5y3jx"]
+curve = SubResource("Curve_u37ga")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xn053"]
+emission_shape = 1
+emission_sphere_radius = 0.2
+spread = 180.0
+initial_velocity_max = 1.0
+gravity = Vector3(0, 0.3, 0)
+scale_min = 0.099999994
+scale_max = 0.29999998
+scale_curve = SubResource("CurveTexture_5y3jx")
+color_initial_ramp = SubResource("GradientTexture1D_0cxpc")
+emission_curve = SubResource("CurveTexture_e84yh")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0iaxd"]
+vertex_color_use_as_albedo = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_1wwxm"]
+material = SubResource("StandardMaterial3D_0iaxd")
+
+[node name="BulletImpact" type="Node3D" unique_id=281433446]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="." unique_id=241503950]
+emitting = false
+amount = 16
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.8
+fixed_fps = 0
+process_material = SubResource("ParticleProcessMaterial_xn053")
+draw_pass_1 = SubResource("SphereMesh_1wwxm")

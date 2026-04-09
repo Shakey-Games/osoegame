@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://l4yphrgiuk8b"
+path="res://.godot/imported/Resident Evil 9 Requiem Leon's Combat Theme Music Remake 4K - SolidFireGaming.mp3-f7d3d8f56229e7c7aee5ba8a83a50b4e.mp3str"
+
+[deps]
+
+source_file="res://source/assets/audio/Resident Evil 9 Requiem Leon's Combat Theme Music Remake 4K - SolidFireGaming.mp3"
+dest_files=["res://.godot/imported/Resident Evil 9 Requiem Leon's Combat Theme Music Remake 4K - SolidFireGaming.mp3-f7d3d8f56229e7c7aee5ba8a83a50b4e.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

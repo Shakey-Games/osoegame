@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://wck77mo23kwu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mb3eh"]
+bg_color = Color(0, 0, 0, 0)
+border_color = Color(0, 0, 0, 1)
+border_blend = true
+corner_detail = 20
+
+[node name="BossUI" type="Panel" unique_id=548785374]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -144.0
+offset_right = 400.0
+offset_bottom = -88.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_mb3eh")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=659932494]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -376.0
+offset_top = -20.0
+offset_right = 376.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="NameLabel" type="Label" parent="VBoxContainer" unique_id=809994539]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Name"
+horizontal_alignment = 1
+
+[node name="HealthBar" type="ProgressBar" parent="VBoxContainer" unique_id=1931630137]
+custom_minimum_size = Vector2(0, 8.055)
+layout_mode = 2
+value = 8.86
+show_percentage = false

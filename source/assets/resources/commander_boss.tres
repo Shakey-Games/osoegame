@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://d06ad6rq3jm2p"]
+
+[ext_resource type="Script" uid="uid://cgt7s0e0nmuvm" path="res://source/assets/scripts/attack_data.gd" id="1_vq2q0"]
+[ext_resource type="Script" uid="uid://borax688mgxlj" path="res://source/assets/scripts/enemy_data.gd" id="2_cu6k5"]
+[ext_resource type="PackedScene" uid="uid://dvl2khe7d0fgv" path="res://source/assets/scenes/projectile.tscn" id="2_xc3t8"]
+
+[sub_resource type="Resource" id="Resource_vq2q0"]
+script = ExtResource("1_vq2q0")
+damage = 30.0
+range = 5.0
+max_range = 5.0
+metadata/_custom_type_script = "uid://cgt7s0e0nmuvm"
+
+[sub_resource type="Resource" id="Resource_cu6k5"]
+script = ExtResource("1_vq2q0")
+attack_name = "Basic ranged"
+attack_type = "ranged"
+max_range = 50.0
+cooldown = 0.5
+projectile_scene = ExtResource("2_xc3t8")
+metadata/_custom_type_script = "uid://cgt7s0e0nmuvm"
+
+[resource]
+script = ExtResource("2_cu6k5")
+display_name = "The Commander"
+max_health = 2000.0
+speed = 2.0
+attacks = Array[ExtResource("1_vq2q0")]([SubResource("Resource_vq2q0"), SubResource("Resource_cu6k5")])
+is_boss = true
+metadata/_custom_type_script = "uid://borax688mgxlj"
