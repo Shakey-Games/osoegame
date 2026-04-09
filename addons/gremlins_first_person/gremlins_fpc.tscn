@@ -5,6 +5,8 @@
 [sub_resource type="GDScript" id="GDScript_5oqox"]
 script/source = "extends Damageable
 
+@onready var pickup_prompt_label: Label = $CanvasLayer/PickupPrompt
+
 # --- Movement Settings ---
 @export var speed : float = 5
 @export var sprint_speed : float = 8
@@ -24,7 +26,7 @@ script/source = "extends Damageable
 
 # --- Shooting ---
 @export var weapon_damage : float = 25
-@export var impact_scene : PackedScene
+@export var impact_scene : PackedScene   # optional, for muzzle flash / impact effects
 
 # --- Camera Bobbing & Leaning ---
 @export var bobbing_enabled: bool = true
@@ -48,11 +50,9 @@ script/source = "extends Damageable
 # --- Nodes ---
 @onready var head = $Head
 @onready var camera = $Head/Camera
-@onready var ray = $Head/Camera/RayCast3D
 @onready var health_bar: ProgressBar = $CanvasLayer/HealthBar
 @onready var damage_flash: ColorRect = $CanvasLayer/DamageFlash
 @onready var ammo_label: Label = $CanvasLayer/AmmoLabel
-@onready var pickup_prompt_label: Label = $CanvasLayer/PickupPrompt
 @onready var soul_label: Label = $CanvasLayer/SoulLabel
 
 # --- State ---
@@ -67,7 +67,7 @@ var ammo_pistol: int = 30
 var max_ammo_pistol: int = 100
 var soul_count: int = 0
 
-# Pickup system
+# Pickup system (for 3D prompts)
 var current_near_pickup = null
 
 # Camera bobbing / leaning state
@@ -96,7 +96,7 @@ func _ready():
 	update_ammo_ui()
 	update_soul_ui()
 	
-	# Connect signals
+	# Connect signals for 3D pickups (optional, if you still use EventBus)
 	EventBus.show_pickup_prompt.connect(_on_show_pickup_prompt)
 	EventBus.hide_pickup_prompt.connect(_on_hide_pickup_prompt)
 
@@ -258,41 +258,47 @@ func camera_shake(intensity: float = 0.15, duration: float = 0.2):
 	shake_intensity = intensity
 
 # -------------------------
-# SHOOTING
+# SHOOTING (PROJECTILE VERSION)
 # -------------------------
 func shoot():
 	if ammo_pistol <= 0:
 		print(\"Out of ammo!\")
 		return
 	
-	ray.force_raycast_update()
-	if ray.is_colliding():
-		var hit_pos = ray.get_collision_point()
-		var target = ray.get_collider()
-
-		if not target.has_method(\"take_damage\") and target.get_parent() != null:
-			target = target.get_parent()
-
-		if target.has_method(\"take_damage\"):
-			target.take_damage(weapon_damage)
-			ammo_pistol -= 1
-			update_ammo_ui()
-
-		var impact = impact_scene.instantiate()
-		get_tree().root.add_child(impact)
-		impact.global_position = hit_pos
-		impact.global_transform.basis = Basis()
-		audio_stream_player.play()
-		camera_shake(0.12, 0.18)
-
-		var particles = impact.get_node(\"GPUParticles3D\")
-		particles.emitting = false
-		particles.emitting = true
-		await get_tree().create_timer(2.0).timeout
-		impact.queue_free()
-
+	ammo_pistol -= 1
+	update_ammo_ui()
+	
+	var projectile_scene = preload(\"res://source/assets/scenes/projectile.tscn\")
+	var projectile = projectile_scene.instantiate()
+	
+	# Add to scene tree FIRST (so get_tree() works)
+	get_tree().root.add_child(projectile)
+	
+	# Position at camera, slightly forward
+	var spawn_pos = camera.global_position + camera.global_transform.basis.z * -0.5
+	projectile.global_position = spawn_pos
+	
+	var direction = -camera.global_transform.basis.z
+	direction = direction.normalized()
+	
+	# Initialize (projectile now has a valid tree)
+	if projectile.has_method(\"initialize\"):
+		projectile.initialize(direction, weapon_damage, self)
+	else:
+		projectile.linear_velocity = direction * 30.0
+	
+	audio_stream_player.play()
+	camera_shake(0.12, 0.18)
+	
+	# Optional muzzle flash
+	if impact_scene:
+		var flash = impact_scene.instantiate()
+		get_tree().root.add_child(flash)
+		flash.global_position = spawn_pos
+		await get_tree().create_timer(0.1).timeout
+		flash.queue_free()
 # -------------------------
-# PICKUP SYSTEM
+# PICKUP SYSTEM (for 3D prompts)
 # -------------------------
 func _on_show_pickup_prompt(prompt_text, pickup_ref):
 	current_near_pickup = pickup_ref
@@ -316,7 +322,6 @@ func add_soul(amount: int):
 
 func heal(amount: int):
 	health = min(health + amount, max_health)
-	# Update health bar UI
 	var ratio = health / max_health
 	update_health_color(health_bar, ratio)
 	var tween = create_tween()
