@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="PickupData" format=3 uid="uid://osi8elkrfbiw"]
+
+[ext_resource type="Script" uid="uid://bwskxmygh3vem" path="res://source/assets/scripts/pickup_data.gd" id="1_6xwnj"]
+
+[resource]
+script = ExtResource("1_6xwnj")
+amount = 25
+metadata/_custom_type_script = "uid://bwskxmygh3vem"

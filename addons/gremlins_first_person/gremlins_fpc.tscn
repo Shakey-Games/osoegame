@@ -51,6 +51,9 @@ script/source = "extends Damageable
 @onready var ray = $Head/Camera/RayCast3D
 @onready var health_bar: ProgressBar = $CanvasLayer/HealthBar
 @onready var damage_flash: ColorRect = $CanvasLayer/DamageFlash
+@onready var ammo_label: Label = $CanvasLayer/AmmoLabel
+@onready var pickup_prompt_label: Label = $CanvasLayer/PickupPrompt
+@onready var soul_label: Label = $CanvasLayer/SoulLabel
 
 # --- State ---
 var is_sprinting : bool = false
@@ -59,14 +62,22 @@ var head_original_height : float
 var flash_duration := 0.2
 var flash_timer := 0.0
 
+# Ammo & Souls
+var ammo_pistol: int = 30
+var max_ammo_pistol: int = 100
+var soul_count: int = 0
+
+# Pickup system
+var current_near_pickup = null
+
 # Camera bobbing / leaning state
 var bobbing_time: float = 0.0
 var target_lean: float = 0.0
 var current_lean: float = 0.0
 
-# Camera shake state (smooth)
-var shake_remaining: float = 0.5
-var shake_intensity: float = 0.5
+# Camera shake state
+var shake_remaining: float = 0.0
+var shake_intensity: float = 0.0
 
 @onready var audio_stream_player: AudioStreamPlayer = $AudioStreamPlayer
 
@@ -81,18 +92,21 @@ func _ready():
 	damage_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	health_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
-	var initial_ratio = health / max_health
-	update_health_color(health_bar, initial_ratio)
+	update_health_color(health_bar, health / max_health)
+	update_ammo_ui()
+	update_soul_ui()
+	
+	# Connect signals
+	EventBus.show_pickup_prompt.connect(_on_show_pickup_prompt)
+	EventBus.hide_pickup_prompt.connect(_on_hide_pickup_prompt)
 
-func _process(delta: float) -> void:
-	# Damage flash
+func _process(delta: float):
 	if flash_timer > 0:
 		flash_timer -= delta
 		damage_flash.color = Color(1, 0, 0, flash_timer / flash_duration)
 	else:
 		damage_flash.color = Color(1, 0, 0, 0)
 	
-	# Camera motion (bobbing, leaning, shake)
 	update_camera_motion(delta)
 
 # -------------------------
@@ -128,6 +142,11 @@ func _input(event):
 			
 	if event.is_action_pressed(\"fire\"):
 		shoot()
+	
+	if event.is_action_pressed(\"interact\") and current_near_pickup:
+		current_near_pickup.pickup(self)
+		current_near_pickup = null
+		_on_hide_pickup_prompt()
 
 # -------------------------
 # MOUSE LOOK
@@ -195,13 +214,12 @@ func _uncrouch():
 	is_crouching = false
 
 # -------------------------
-# CAMERA BOB, LEAN & SMOOTH SHAKE
+# CAMERA BOB, LEAN & SHAKE
 # -------------------------
 func update_camera_motion(delta: float):
 	var velocity_horizontal = Vector2(velocity.x, velocity.z).length()
 	var is_moving = velocity_horizontal > 0.1 and is_on_floor()
 	
-	# ---- Bobbing ----
 	var target_cam_pos = Vector3.ZERO
 	if bobbing_enabled and is_moving:
 		var current_move_speed = speed
@@ -217,7 +235,6 @@ func update_camera_motion(delta: float):
 		bobbing_time = 0.0
 		target_cam_pos = Vector3.ZERO
 	
-	# ---- Leaning ----
 	if leaning_enabled and is_moving:
 		var input_dir = Input.get_vector(left, right, forward, backward)
 		target_lean = -input_dir.x * leaning_intensity
@@ -226,19 +243,16 @@ func update_camera_motion(delta: float):
 	current_lean = lerp(current_lean, target_lean, delta * leaning_smoothing)
 	camera.rotation.z = current_lean
 	
-	# ---- Super Smooth Camera Shake ----
 	var shake_offset = Vector3.ZERO
 	if shake_remaining > 0:
 		shake_remaining -= delta
-		var current_intensity = shake_intensity * (shake_remaining / (shake_remaining + delta))  # smooth decay
+		var current_intensity = shake_intensity * (shake_remaining / (shake_remaining + delta))
 		shake_offset.x = randf_range(-current_intensity, current_intensity)
 		shake_offset.y = randf_range(-current_intensity * 0.5, current_intensity * 0.5)
 		if shake_remaining <= 0:
 			shake_remaining = 0
-	# Apply final camera position (bob + shake)
 	camera.position = target_cam_pos + shake_offset
 
-# Called from shoot() to trigger a smooth shake
 func camera_shake(intensity: float = 0.15, duration: float = 0.2):
 	shake_remaining = duration
 	shake_intensity = intensity
@@ -247,6 +261,10 @@ func camera_shake(intensity: float = 0.15, duration: float = 0.2):
 # SHOOTING
 # -------------------------
 func shoot():
+	if ammo_pistol <= 0:
+		print(\"Out of ammo!\")
+		return
+	
 	ray.force_raycast_update()
 	if ray.is_colliding():
 		var hit_pos = ray.get_collision_point()
@@ -257,19 +275,60 @@ func shoot():
 
 		if target.has_method(\"take_damage\"):
 			target.take_damage(weapon_damage)
+			ammo_pistol -= 1
+			update_ammo_ui()
 
 		var impact = impact_scene.instantiate()
 		get_tree().root.add_child(impact)
 		impact.global_position = hit_pos
 		impact.global_transform.basis = Basis()
 		audio_stream_player.play()
-		camera_shake(0.12, 0.18)   # subtle, smooth shake
+		camera_shake(0.12, 0.18)
 
 		var particles = impact.get_node(\"GPUParticles3D\")
 		particles.emitting = false
 		particles.emitting = true
 		await get_tree().create_timer(2.0).timeout
 		impact.queue_free()
+
+# -------------------------
+# PICKUP SYSTEM
+# -------------------------
+func _on_show_pickup_prompt(prompt_text, pickup_ref):
+	current_near_pickup = pickup_ref
+	if pickup_prompt_label:
+		pickup_prompt_label.text = \"Press E to pick up \" + prompt_text
+		pickup_prompt_label.visible = true
+
+func _on_hide_pickup_prompt():
+	current_near_pickup = null
+	if pickup_prompt_label:
+		pickup_prompt_label.visible = false
+
+func add_ammo(amount: int):
+	ammo_pistol = min(ammo_pistol + amount, max_ammo_pistol)
+	update_ammo_ui()
+
+func add_soul(amount: int):
+	soul_count += amount
+	update_soul_ui()
+	print(\"Souls: \", soul_count)
+
+func heal(amount: int):
+	health = min(health + amount, max_health)
+	# Update health bar UI
+	var ratio = health / max_health
+	update_health_color(health_bar, ratio)
+	var tween = create_tween()
+	tween.tween_property(health_bar, \"value\", ratio * 100, 0.3)
+
+func update_ammo_ui():
+	if ammo_label:
+		ammo_label.text = str(ammo_pistol)
+
+func update_soul_ui():
+	if soul_label:
+		soul_label.text = str(soul_count)
 
 # -------------------------
 # DAMAGE SYSTEM
@@ -287,7 +346,7 @@ func take_damage(amount):
 	health_tween.tween_property(health_bar, \"value\", ratio * 100, 0.3)
 	update_health_color(health_bar, ratio)
 
-	camera_shake(0.2, 0.25)   # stronger shake when damaged
+	camera_shake(0.2, 0.25)
 	print(\"Player Health:\", health)
 
 func on_death():
@@ -309,7 +368,6 @@ func update_health_color(bar: ProgressBar, ratio: float):
 	fill_style.bg_color = get_health_color(ratio)
 	bar.add_theme_stylebox_override(\"fill\", fill_style)
 
-# Override flash_hit to prevent any mesh flash (player uses UI flash instead)
 func flash_hit():
 	pass
 "
@@ -337,6 +395,9 @@ border_width_right = 10
 border_width_bottom = 10
 border_color = Color(0, 0, 0, 1)
 border_blend = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dgthw"]
+bg_color = Color(0, 0, 0, 0.23921569)
 
 [node name="FirstPersonCharacter" type="CharacterBody3D" unique_id=758639874 groups=["player"]]
 collision_mask = 42
@@ -380,6 +441,35 @@ theme_override_styles/background = SubResource("StyleBoxFlat_xvc6b")
 theme_override_styles/fill = SubResource("StyleBoxFlat_f5edj")
 value = 100.0
 show_percentage = false
+
+[node name="AmmoLabel" type="Label" parent="CanvasLayer" unique_id=707429313]
+offset_left = 8.0
+offset_top = 80.0
+offset_right = 48.0
+offset_bottom = 103.0
+text = "30"
+
+[node name="SoulLabel" type="Label" parent="CanvasLayer" unique_id=1074256902]
+offset_left = 8.0
+offset_top = 112.0
+offset_right = 48.0
+offset_bottom = 135.0
+text = "0"
+
+[node name="PickupPrompt" type="Label" parent="CanvasLayer" unique_id=1044159248]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -28.0
+offset_right = 80.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_dgthw")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=379866693]
 stream = ExtResource("1_f5edj")

@@ -1,15 +1,30 @@
 [gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://cc12d1cyk21ng"]
 
 [ext_resource type="Script" uid="uid://cgt7s0e0nmuvm" path="res://source/assets/scripts/attack_data.gd" id="1_1wgme"]
+[ext_resource type="Script" uid="uid://brvus0lybow3r" path="res://source/assets/scripts/drop_entry.gd" id="2_4gi36"]
 [ext_resource type="Script" uid="uid://borax688mgxlj" path="res://source/assets/scripts/enemy_data.gd" id="2_6fsc0"]
+[ext_resource type="Resource" uid="uid://osi8elkrfbiw" path="res://source/assets/resources/ammo_pickup.tres" id="3_nj0es"]
+[ext_resource type="Resource" uid="uid://uhgt8c3eju8i" path="res://source/assets/resources/health_pickup.tres" id="4_nj0es"]
 
 [sub_resource type="Resource" id="Resource_bbf8c"]
 script = ExtResource("1_1wgme")
 cooldown = 2.0
 metadata/_custom_type_script = "uid://cgt7s0e0nmuvm"
 
+[sub_resource type="Resource" id="Resource_k7le1"]
+script = ExtResource("2_4gi36")
+pickup_data = ExtResource("3_nj0es")
+metadata/_custom_type_script = "uid://brvus0lybow3r"
+
+[sub_resource type="Resource" id="Resource_uoma1"]
+script = ExtResource("2_4gi36")
+pickup_data = ExtResource("4_nj0es")
+metadata/_custom_type_script = "uid://brvus0lybow3r"
+
 [resource]
 script = ExtResource("2_6fsc0")
 display_name = "Grunt"
 attacks = Array[ExtResource("1_1wgme")]([SubResource("Resource_bbf8c")])
+drop_chance = 1.0
+drop_table = Array[ExtResource("2_4gi36")]([SubResource("Resource_k7le1"), SubResource("Resource_uoma1")])
 metadata/_custom_type_script = "uid://borax688mgxlj"

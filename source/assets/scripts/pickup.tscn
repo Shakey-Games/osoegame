@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://cou3aexbbfuto"]
+
+[ext_resource type="Script" uid="uid://b50kupich517r" path="res://source/assets/scripts/pickup.gd" id="1_je0td"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ivwf6"]
+emission_enabled = true
+emission = Color(1, 1, 0, 1)
+emission_energy_multiplier = 21.14
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_je0td"]
+material = SubResource("StandardMaterial3D_ivwf6")
+top_radius = 0.015
+bottom_radius = 0.002
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j0sv8"]
+
+[node name="pickup" type="Area3D" unique_id=1768531060]
+script = ExtResource("1_je0td")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1906949157]
+mesh = SubResource("CylinderMesh_je0td")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=735177530]
+shape = SubResource("BoxShape3D_j0sv8")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

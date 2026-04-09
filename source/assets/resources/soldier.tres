@@ -3,6 +3,9 @@
 [ext_resource type="Script" uid="uid://cgt7s0e0nmuvm" path="res://source/assets/scripts/attack_data.gd" id="1_erenn"]
 [ext_resource type="PackedScene" uid="uid://dvl2khe7d0fgv" path="res://source/assets/scenes/projectile.tscn" id="2_pc26u"]
 [ext_resource type="Script" uid="uid://borax688mgxlj" path="res://source/assets/scripts/enemy_data.gd" id="2_rk2ro"]
+[ext_resource type="Script" uid="uid://brvus0lybow3r" path="res://source/assets/scripts/drop_entry.gd" id="3_pc26u"]
+[ext_resource type="Resource" uid="uid://osi8elkrfbiw" path="res://source/assets/resources/ammo_pickup.tres" id="4_cs1j7"]
+[ext_resource type="Resource" uid="uid://uhgt8c3eju8i" path="res://source/assets/resources/health_pickup.tres" id="5_2nxk8"]
 
 [sub_resource type="Resource" id="Resource_bbf8c"]
 script = ExtResource("1_erenn")
@@ -20,10 +23,24 @@ cooldown = 3.0
 projectile_scene = ExtResource("2_pc26u")
 metadata/_custom_type_script = "uid://cgt7s0e0nmuvm"
 
+[sub_resource type="Resource" id="Resource_2atb0"]
+script = ExtResource("3_pc26u")
+pickup_data = ExtResource("4_cs1j7")
+weight = 0.7
+metadata/_custom_type_script = "uid://brvus0lybow3r"
+
+[sub_resource type="Resource" id="Resource_56u05"]
+script = ExtResource("3_pc26u")
+pickup_data = ExtResource("5_2nxk8")
+weight = 0.3
+metadata/_custom_type_script = "uid://brvus0lybow3r"
+
 [resource]
 script = ExtResource("2_rk2ro")
 display_name = "Soldier"
 max_health = 200.0
 speed = 2.0
 attacks = Array[ExtResource("1_erenn")]([SubResource("Resource_bbf8c"), SubResource("Resource_imewr")])
+drop_chance = 1.0
+drop_table = Array[ExtResource("3_pc26u")]([SubResource("Resource_2atb0"), SubResource("Resource_56u05")])
 metadata/_custom_type_script = "uid://borax688mgxlj"

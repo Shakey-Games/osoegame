@@ -1,6 +1,8 @@
 extends Damageable
 class_name BaseEnemy
 
+const PICKUP_SCENE = preload("res://source/assets/scripts/pickup.tscn")
+
 # --- Data Resource ---
 @export var enemy_data: EnemyData
 
@@ -183,11 +185,33 @@ func flash_hit():
 	pass
 
 func on_death():
+	# --- Drop system ---
+	if enemy_data and randf() < enemy_data.drop_chance and not enemy_data.drop_table.is_empty():
+		# Calculate total weight
+		var total_weight = 0.0
+		for entry in enemy_data.drop_table:
+			total_weight += entry.weight
+		
+		# Weighted random pick
+		var roll = randf() * total_weight
+		var accum = 0.0
+		for entry in enemy_data.drop_table:
+			accum += entry.weight
+			if roll <= accum:
+				_spawn_pickup(entry.pickup_data)
+				break
+	
+	# --- Existing death code (keep as is) ---
 	set_physics_process(false)
 	set_collision_layer(0)
 	set_collision_mask(0)
-	print("Starting death tween for ", name)
 	var tween = create_tween()
 	tween.tween_property(self, "scale", Vector3.ZERO, 0.3)
 	await tween.finished
-	print("Death tween finished")
+
+# Helper function (add at bottom)
+func _spawn_pickup(pickup_data: PickupData):
+	var pickup = PICKUP_SCENE.instantiate()
+	pickup.pickup_data = pickup_data
+	get_tree().root.add_child(pickup)
+	pickup.global_position = global_position

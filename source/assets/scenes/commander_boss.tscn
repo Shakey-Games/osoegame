@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://qnvr2r52b868"]
+
+[ext_resource type="PackedScene" uid="uid://b5jct1po7qd5n" path="res://source/assets/scenes/base_enemy.tscn" id="1_den4v"]
+[ext_resource type="Script" uid="uid://blmmx5m7haawx" path="res://source/assets/scripts/commanderboss.gd" id="2_6jjtr"]
+[ext_resource type="Resource" uid="uid://d06ad6rq3jm2p" path="res://source/assets/resources/commander_boss.tres" id="3_n18ny"]
+[ext_resource type="AudioStream" uid="uid://cb468o73h7i1g" path="res://source/assets/audio/Dark Souls III OST 10 - Vordt of the Boreal Valley - Games Music.mp3" id="4_n18ny"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6jjtr"]
+radius = 1.5253906
+height = 6.091797
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_v7lhx"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6jjtr"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_8vt0i"]
+material = SubResource("StandardMaterial3D_6jjtr")
+
+[node name="Commander" unique_id=634020217 instance=ExtResource("1_den4v")]
+script = ExtResource("2_6jjtr")
+phase_2_speed_multiplier = 1.3
+phase_3_speed_multiplier = 1.6
+enemy_data = ExtResource("3_n18ny")
+
+[node name="CollisionShape3D" parent="." index="0" unique_id=434747438]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.026367188, 0)
+shape = SubResource("CapsuleShape3D_6jjtr")
+
+[node name="HealthSprite" parent="." index="2" unique_id=894017893]
+texture = SubResource("ViewportTexture_v7lhx")
+
+[node name="Node3D" type="Node3D" parent="." index="3" unique_id=913180757]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Node3D" index="0" unique_id=2049847804]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_8vt0i")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." index="4" unique_id=569350731]
+stream = ExtResource("4_n18ny")
+volume_db = 10.0
+autoplay = true
