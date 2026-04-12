@@ -21,7 +21,6 @@ EventBus="*uid://bbrur10cneif6"
 
 [display]
 
-window/size/mode=4
 window/size/resizable=false
 window/stretch/mode="canvas_items"
 

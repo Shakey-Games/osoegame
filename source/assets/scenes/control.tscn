@@ -9,9 +9,9 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pcv2p"]
 shader = ExtResource("2_8n1ua")
 shader_parameter/pixel_size = 2.0
-shader_parameter/color_levels = 16.0
-shader_parameter/dither_strength = 0.4
-shader_parameter/curvature = 0.02000000095
+shader_parameter/color_levels = 16.000000569999997
+shader_parameter/dither_strength = 0.0
+shader_parameter/curvature = 0.038000001805
 
 [node name="Control" type="Control" unique_id=514963411]
 layout_mode = 3
