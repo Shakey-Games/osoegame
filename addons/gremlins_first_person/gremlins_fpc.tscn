@@ -37,6 +37,11 @@ script/source = "extends Damageable
 @export var leaning_intensity: float = 0.05
 @export var leaning_smoothing: float = 8.0
 
+# --- FOV Settings ---
+@export var normal_fov: float = 75.0
+@export var sprint_fov: float = 90.0
+@export var fov_smoothing: float = 6.0
+
 # --- Input Names ---
 @export_group(\"Inputs\")
 @export var left : String = \"left\"
@@ -92,9 +97,11 @@ func _ready():
 	damage_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	health_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
-	update_health_color(health_bar, health / max_health)
-	update_ammo_ui()
-	update_soul_ui()
+	#update_health_color(health_bar, health / max_health)
+	#update_ammo_ui()
+	#update_soul_ui()
+	
+	camera.fov = normal_fov
 	
 	# Connect signals for 3D pickups (optional, if you still use EventBus)
 	EventBus.show_pickup_prompt.connect(_on_show_pickup_prompt)
@@ -255,6 +262,17 @@ func update_camera_motion(delta: float):
 		if shake_remaining <= 0:
 			shake_remaining = 0
 	camera.position = target_cam_pos + shake_offset
+	
+	# --- FOV CHANGE ---
+	var moving = velocity_horizontal > 0.1
+
+	var target_fov = normal_fov
+
+	if is_sprinting and moving and not is_crouching:
+		var speed_ratio = clamp( velocity_horizontal / sprint_speed, 0.0, 1.0)
+		target_fov = lerp(normal_fov, sprint_fov, speed_ratio)
+
+	camera.fov = lerp(camera.fov, target_fov, delta * fov_smoothing)
 
 func camera_shake(intensity: float = 0.15, duration: float = 0.2):
 	shake_remaining = duration
