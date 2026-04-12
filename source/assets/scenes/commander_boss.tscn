@@ -9,7 +9,7 @@
 radius = 1.5253906
 height = 6.091797
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_v7lhx"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_n18ny"]
 viewport_path = NodePath("SubViewport")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6jjtr"]
@@ -29,7 +29,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.026367188, 0)
 shape = SubResource("CapsuleShape3D_6jjtr")
 
 [node name="HealthSprite" parent="." index="2" unique_id=894017893]
-texture = SubResource("ViewportTexture_v7lhx")
+texture = SubResource("ViewportTexture_n18ny")
 
 [node name="Node3D" type="Node3D" parent="." index="3" unique_id=913180757]
 
@@ -39,5 +39,4 @@ mesh = SubResource("CapsuleMesh_8vt0i")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." index="4" unique_id=569350731]
 stream = ExtResource("4_n18ny")
-volume_db = 10.0
 autoplay = true
