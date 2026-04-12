@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cgt7s0e0nmuvm" path="res://source/assets/scripts/attack_data.gd" id="1_vq2q0"]
 [ext_resource type="Script" uid="uid://borax688mgxlj" path="res://source/assets/scripts/enemy_data.gd" id="2_cu6k5"]
 [ext_resource type="PackedScene" uid="uid://dvl2khe7d0fgv" path="res://source/assets/scenes/projectile.tscn" id="2_xc3t8"]
+[ext_resource type="Script" uid="uid://brvus0lybow3r" path="res://source/assets/scripts/drop_entry.gd" id="3_xc3t8"]
 
 [sub_resource type="Resource" id="Resource_vq2q0"]
 script = ExtResource("1_vq2q0")

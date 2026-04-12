@@ -1,0 +1,74 @@
+[gd_scene format=3 uid="uid://73katfmy50xe"]
+
+[ext_resource type="Script" uid="uid://dcvsfxpoumx1l" path="res://source/assets/scripts/global_ui.gd" id="1_h5e3b"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rrc7j"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0, 0, 0, 1)
+border_blend = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h5e3b"]
+bg_color = Color(0, 1, 0, 1)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0, 0, 0, 1)
+border_blend = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rpixb"]
+bg_color = Color(0, 0, 0, 0.23921569)
+
+[node name="GlobalUI" type="CanvasLayer" unique_id=664521723]
+script = ExtResource("1_h5e3b")
+
+[node name="DamageFlash" type="ColorRect" parent="." unique_id=1916551499]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 0, 0, 0)
+
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=1484459253]
+offset_left = 32.0
+offset_top = 32.0
+offset_right = 448.0
+offset_bottom = 52.0
+theme_override_styles/background = SubResource("StyleBoxFlat_rrc7j")
+theme_override_styles/fill = SubResource("StyleBoxFlat_h5e3b")
+value = 100.0
+show_percentage = false
+
+[node name="AmmoLabel" type="Label" parent="." unique_id=1213099430]
+offset_left = 8.0
+offset_top = 80.0
+offset_right = 48.0
+offset_bottom = 103.0
+text = "30"
+
+[node name="SoulLabel" type="Label" parent="." unique_id=552939164]
+offset_left = 8.0
+offset_top = 112.0
+offset_right = 48.0
+offset_bottom = 135.0
+text = "0"
+
+[node name="PickupPrompt" type="Label" parent="." unique_id=818528724]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -28.0
+offset_right = 80.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_rpixb")

@@ -99,6 +99,9 @@ func _ready():
 	# Connect signals for 3D pickups (optional, if you still use EventBus)
 	EventBus.show_pickup_prompt.connect(_on_show_pickup_prompt)
 	EventBus.hide_pickup_prompt.connect(_on_hide_pickup_prompt)
+	EventBus.player_health_changed.emit(health, max_health)
+	EventBus.player_ammo_changed.emit(ammo_pistol)
+	EventBus.player_soul_changed.emit(soul_count)
 
 func _process(delta: float):
 	if flash_timer > 0:
@@ -289,7 +292,7 @@ func shoot():
 	
 	audio_stream_player.play()
 	camera_shake(0.12, 0.18)
-	
+	EventBus.player_ammo_changed.emit(ammo_pistol)
 	# Optional muzzle flash
 	if impact_scene:
 		var flash = impact_scene.instantiate()
@@ -313,19 +316,22 @@ func _on_hide_pickup_prompt():
 
 func add_ammo(amount: int):
 	ammo_pistol = min(ammo_pistol + amount, max_ammo_pistol)
-	update_ammo_ui()
+	#update_ammo_ui()
+	EventBus.player_ammo_changed.emit(ammo_pistol)
 
 func add_soul(amount: int):
 	soul_count += amount
-	update_soul_ui()
+	#update_soul_ui()
 	print(\"Souls: \", soul_count)
+	EventBus.player_soul_changed.emit(soul_count)
 
 func heal(amount: int):
 	health = min(health + amount, max_health)
 	var ratio = health / max_health
-	update_health_color(health_bar, ratio)
+	#update_health_color(health_bar, ratio)
 	var tween = create_tween()
 	tween.tween_property(health_bar, \"value\", ratio * 100, 0.3)
+	EventBus.player_health_changed.emit(health, max_health)
 
 func update_ammo_ui():
 	if ammo_label:
@@ -353,6 +359,7 @@ func take_damage(amount):
 
 	camera_shake(0.2, 0.25)
 	print(\"Player Health:\", health)
+	EventBus.player_health_changed.emit(health, max_health)
 
 func on_death():
 	print(\"Player died\")
@@ -427,6 +434,7 @@ mesh = SubResource("CapsuleMesh_5oqox")
 surface_material_override/0 = SubResource("StandardMaterial3D_luvdq")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1280116652]
+visible = false
 
 [node name="DamageFlash" type="ColorRect" parent="CanvasLayer" unique_id=1797936431]
 anchors_preset = 15

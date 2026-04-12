@@ -214,4 +214,4 @@ func _spawn_pickup(pickup_data: PickupData):
 	var pickup = PICKUP_SCENE.instantiate()
 	pickup.pickup_data = pickup_data
 	get_tree().root.add_child(pickup)
-	pickup.global_position = global_position
+	pickup.global_position = global_position + Vector3.DOWN * 0.5

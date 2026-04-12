@@ -1,41 +1,32 @@
 [gd_scene format=3 uid="uid://bb4nmcx4gi7qj"]
 
-[ext_resource type="PackedScene" uid="uid://bmdd22p4jk642" path="res://source/assets/scenes/node_3d.tscn" id="1_wov57"]
+[ext_resource type="PackedScene" uid="uid://cprufl2cyvyif" path="res://source/assets/scenes/node_3d.scn" id="1_8n1ua"]
 [ext_resource type="Shader" uid="uid://db07itrkaxo81" path="res://source/assets/scenes/control.gdshader" id="2_8n1ua"]
+[ext_resource type="PackedScene" uid="uid://73katfmy50xe" path="res://source/assets/scenes/global_ui.tscn" id="3_pcv2p"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8n1ua"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pcv2p"]
 shader = ExtResource("2_8n1ua")
-shader_parameter/pixel_size = 6.0
-shader_parameter/color_levels = 15.870000563825
-shader_parameter/dither_strength = 1.0
-shader_parameter/curvature = 0.0400000019
+shader_parameter/pixel_size = 2.0
+shader_parameter/color_levels = 16.0
+shader_parameter/dither_strength = 0.4
+shader_parameter/curvature = 0.02000000095
 
 [node name="Control" type="Control" unique_id=514963411]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -18.0
-offset_top = -18.0
-offset_right = -18.0
-offset_bottom = -18.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=1904768732]
 material = SubResource("ShaderMaterial_8n1ua")
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.009000001
-anchor_top = 0.017
-anchor_right = 1.0090001
-anchor_bottom = 1.0170001
-offset_left = -10.368001
-offset_top = -11.016001
-offset_right = 757.63196
-offset_bottom = 420.98395
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 stretch = true
@@ -43,25 +34,21 @@ stretch = true
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=456631911]
 handle_input_locally = false
 canvas_item_default_texture_filter = 0
-size = Vector2i(2688, 1512)
+audio_listener_enable_3d = true
+size = Vector2i(1152, 648)
 size_2d_override = Vector2i(5, 5)
 render_target_update_mode = 4
 
-[node name="Node3D" parent="SubViewportContainer/SubViewport" unique_id=64685377 instance=ExtResource("1_wov57")]
+[node name="Node3D" parent="SubViewportContainer/SubViewport" unique_id=64685377 instance=ExtResource("1_8n1ua")]
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1151997921]
-visible = false
 material = SubResource("ShaderMaterial_pcv2p")
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.009000001
-anchor_top = 0.017
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.7199993
-offset_top = -0.3600006
-offset_right = 18.0
-offset_bottom = 18.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="GlobalUI" parent="." unique_id=664521723 instance=ExtResource("3_pcv2p")]
