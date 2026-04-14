@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://jl0oex7uf2ol"]
+
+[ext_resource type="Script" uid="uid://cxcexm53eflwh" path="res://source/assets/scripts/slot.gd" id="1_njk3j"]
+[ext_resource type="Texture2D" uid="uid://cdpe2vem62ehg" path="res://source/assets/textures/grid.png" id="1_t566r"]
+
+[node name="Slot" type="TextureRect" unique_id=309022870]
+custom_minimum_size = Vector2(64, 64)
+texture = ExtResource("1_t566r")
+expand_mode = 1
+script = ExtResource("1_njk3j")
+
+[node name="StatusFilter" type="ColorRect" parent="." unique_id=681914316]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0)
