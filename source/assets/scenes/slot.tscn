@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cxcexm53eflwh" path="res://source/assets/scripts/slot.gd" id="1_njk3j"]
 [ext_resource type="Texture2D" uid="uid://cdpe2vem62ehg" path="res://source/assets/textures/grid.png" id="1_t566r"]
+[ext_resource type="PackedScene" uid="uid://7j83owkyxxgh" path="res://source/assets/scenes/item.tscn" id="3_abwvb"]
 
 [node name="Slot" type="TextureRect" unique_id=309022870]
 custom_minimum_size = Vector2(64, 64)
@@ -17,3 +18,5 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0)
+
+[node name="Item" parent="." unique_id=1160735930 instance=ExtResource("3_abwvb")]
