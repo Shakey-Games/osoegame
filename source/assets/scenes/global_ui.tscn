@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://73katfmy50xe"]
 
 [ext_resource type="Script" uid="uid://dcvsfxpoumx1l" path="res://source/assets/scripts/global_ui.gd" id="1_h5e3b"]
+[ext_resource type="PackedScene" uid="uid://dgxhaqmv6e1yx" path="res://source/assets/scenes/inventory.tscn" id="2_rpixb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rrc7j"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -72,3 +73,6 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_rpixb")
+
+[node name="Inventory" parent="." unique_id=1528719760 instance=ExtResource("2_rpixb")]
+visible = false

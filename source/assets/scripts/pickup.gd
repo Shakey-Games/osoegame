@@ -42,8 +42,10 @@ func pickup(player: Node):
 	match pickup_data.item_type:
 		PickupData.ItemType.PISTOL_AMMO:
 			player.add_ammo(pickup_data.amount)
+			EventBus.emit_signal("add_item", 0)
 		PickupData.ItemType.HEALTH:
 			player.heal(pickup_data.amount)
+			EventBus.emit_signal("add_item", 1)
 		PickupData.ItemType.SOUL:
 			player.add_soul(pickup_data.amount)
 		_:
