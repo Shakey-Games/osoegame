@@ -163,9 +163,17 @@ func _input(event):
 # -------------------------
 func _unhandled_input(event):
 	if event is InputEventMouseMotion:
-		head.rotate_y(-event.relative.x * sensitivity)
-		camera.rotate_x(-event.relative.y * sensitivity)
-		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-80), deg_to_rad(80))
+		# Limit maximum rotation per frame to avoid jumping past 90°
+		var max_delta = deg_to_rad(15)   # 15 degrees max per frame
+		var delta_x = clamp(-event.relative.y * sensitivity, -max_delta, max_delta)
+		var delta_y = -event.relative.x * sensitivity   # yaw has no clamp (can turn freely)
+		
+		head.rotate_y(delta_y)
+		
+		# Apply pitch with immediate clamp
+		var new_pitch = camera.rotation.x + delta_x
+		new_pitch = clamp(new_pitch, deg_to_rad(-80), deg_to_rad(80))
+		camera.rotation.x = new_pitch
 
 # -------------------------
 # MOVEMENT
