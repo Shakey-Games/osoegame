@@ -6,4 +6,5 @@
 script = ExtResource("1_1f55x")
 item_type = 1
 amount = 10
+inventory_item_id = 1
 metadata/_custom_type_script = "uid://bwskxmygh3vem"

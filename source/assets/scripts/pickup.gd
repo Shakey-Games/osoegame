@@ -10,24 +10,19 @@ func _ready():
 		queue_free()
 		return
 	
-	# Snap to ground before becoming visible
 	_snap_to_ground()
-	
 	await get_tree().create_timer(lifetime).timeout
 	queue_free()
 
 func _snap_to_ground():
-	# Raycast downward from the pickup's current position
 	var space_state = get_world_3d().direct_space_state
-	var ray_start = global_position + Vector3.UP * 0.5   # start slightly above
-	var ray_end = global_position + Vector3.DOWN * 10.0  # down up to 10 units
-	var query = PhysicsRayQueryParameters3D.create(ray_start, ray_end, 0xFFFFFFFF)  # all collision layers
+	var ray_start = global_position + Vector3.UP * 0.5
+	var ray_end = global_position + Vector3.DOWN * 10.0
+	var query = PhysicsRayQueryParameters3D.create(ray_start, ray_end, 0xFFFFFFFF)
 	var result = space_state.intersect_ray(query)
 	if result:
-		# Place pickup exactly on the ground
 		global_position = result.position
 	else:
-		# If no ground found, keep original position (fallback)
 		print("No ground found for pickup, staying at ", global_position)
 
 func _on_body_entered(body):
@@ -37,18 +32,30 @@ func _on_body_entered(body):
 func _on_body_exited(body):
 	if body.is_in_group("player"):
 		EventBus.hide_pickup_prompt.emit()
-#
+
 func pickup(player: Node):
-	#var inventory = get_tree().get_first_node_in_group("inventory")
+	# Determine if this item goes into inventory
+	var inv_item_id = _get_inventory_item_id()
+	
+	# If it's an inventory item, check space first
+	if inv_item_id >= 0:
+		if not EventBus.can_add_item_to_inventory(inv_item_id):
+			# Inventory full – abort pickup
+			EventBus.show_pickup_prompt.emit("Inventory Full!", self)
+			# Optionally play a "fail" sound
+			return
+	
+	# Proceed with normal pickup effects
 	match pickup_data.item_type:
 		PickupData.ItemType.PISTOL_AMMO:
 			player.add_ammo(pickup_data.amount)
-			EventBus.emit_signal("add_item", 0)
+			EventBus.add_item.emit(inv_item_id)
 		PickupData.ItemType.HEALTH:
 			player.heal(pickup_data.amount)
-			EventBus.emit_signal("add_item", 1)
+			EventBus.add_item.emit(inv_item_id)
 		PickupData.ItemType.SOUL:
 			player.add_soul(pickup_data.amount)
+			# Souls don't go into inventory, so no add_item emit
 		_:
 			print("Unknown item type")
 	
@@ -61,3 +68,17 @@ func pickup(player: Node):
 		audio.queue_free()
 	
 	queue_free()
+
+func _get_inventory_item_id() -> int:
+	# Use the new field if you added it to PickupData
+	if pickup_data.inventory_item_id >= 0:
+		return pickup_data.inventory_item_id
+	
+	# Fallback mapping based on item_type (adjust IDs to match your JSON)
+	match pickup_data.item_type:
+		PickupData.ItemType.PISTOL_AMMO:
+			return 0
+		PickupData.ItemType.HEALTH:
+			return 1
+		_:
+			return -1   # Not storable
