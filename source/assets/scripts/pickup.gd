@@ -37,7 +37,7 @@ func _on_body_entered(body):
 func _on_body_exited(body):
 	if body.is_in_group("player"):
 		EventBus.hide_pickup_prompt.emit()
-
+#
 func pickup(player: Node):
 	match pickup_data.item_type:
 		PickupData.ItemType.PISTOL_AMMO:
