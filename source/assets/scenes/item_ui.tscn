@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://bubg57cd0n1n5"]
+
+[ext_resource type="Script" uid="uid://bwv5g4xqjgv4" path="res://source/assets/scripts/item.gd" id="1_j4f4l"]
+
+[node name="ItemUI" type="TextureRect" unique_id=1276088657]
+offset_right = 40.0
+offset_bottom = 40.0
+stretch_mode = 5
+script = ExtResource("1_j4f4l")
+
+[node name="StackLabel" type="Label" parent="." unique_id=76319266]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0

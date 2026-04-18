@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://du1qld43wpbp0"]
+
+[ext_resource type="Script" uid="uid://cxcexm53eflwh" path="res://source/assets/scripts/slot.gd" id="1_5d10p"]
+[ext_resource type="Texture2D" uid="uid://cdpe2vem62ehg" path="res://source/assets/textures/grid.png" id="1_e0h8k"]
+
+[node name="SlotUI" type="TextureRect" unique_id=64998336]
+custom_minimum_size = Vector2(64, 64)
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 0
+texture = ExtResource("1_e0h8k")
+stretch_mode = 2
+script = ExtResource("1_5d10p")
+
+[connection signal="gui_input" from="." to="." method="_gui_input"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

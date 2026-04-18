@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://b0blwctt6uhbm"]
+
+[ext_resource type="Script" path="res://source/assets/scripts/inventory_ui.gd" id="1_goy1i"]
+[ext_resource type="Texture2D" uid="uid://d386khdstryuw" path="res://source/assets/textures/Rock058_1K-JPG/Rock058_1K-JPG_Color.jpg" id="1_spst8"]
+
+[node name="TextureRect" type="TextureRect" unique_id=1628687807]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_spst8")
+script = ExtResource("1_goy1i")
