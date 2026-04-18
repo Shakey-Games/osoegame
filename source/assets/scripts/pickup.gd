@@ -39,6 +39,7 @@ func _on_body_exited(body):
 		EventBus.hide_pickup_prompt.emit()
 #
 func pickup(player: Node):
+	#var inventory = get_tree().get_first_node_in_group("inventory")
 	match pickup_data.item_type:
 		PickupData.ItemType.PISTOL_AMMO:
 			player.add_ammo(pickup_data.amount)

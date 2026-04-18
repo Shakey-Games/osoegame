@@ -13,7 +13,7 @@ func _ready():
 	EventBus.player_soul_changed.connect(_on_soul_changed)
 	EventBus.show_pickup_prompt.connect(_on_show_pickup_prompt)
 	EventBus.hide_pickup_prompt.connect(_on_hide_pickup_prompt)
-	EventBus.add_item.connect(show_inventory)
+	#EventBus.add_item.connect(show_inventory)
 	
 	pickup_prompt.visible = false
 	inventory.visible = false

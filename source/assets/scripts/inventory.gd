@@ -1,5 +1,8 @@
 extends Control
 
+const Slot = preload("res://source/assets/scripts/slot.gd")
+const Item = preload("res://source/assets/scripts/item.gd")
+
 @onready var slot_scene = preload("res://source/assets/scenes/slot.tscn")
 @onready var grid_container = $ColorRect/MarginContainer/VBoxContainer/ScrollContainer/GridContainer
 var item_scene = preload("res://source/assets/scenes/item.tscn")
@@ -39,14 +42,22 @@ func _process(delta: float) -> void:
 			if scroll_container.get_global_rect().has_point(get_global_mouse_position()):
 				pick_item()
 
-func add_item(item: int):
-	print("reached here!")
-	print(item)
-	var newItem = item_scene.instantiate()
-	add_child(newItem)
-	newItem.load_item(item)
-	newItem.selected = true
-	itemHeld = newItem
+func add_item(item_id: int):
+	var new_item = item_scene.instantiate()
+	add_child(new_item)
+	new_item.load_item(item_id)
+	
+	# Try to auto-place the item
+	var valid_slot = find_valid_slot_for_item(new_item)
+	if valid_slot:
+		place_item_at_slot(valid_slot, new_item)
+		# Optional: print or play a pickup sound
+		print("Item ", item_id, " added to inventory.")
+	else:
+		# No space – destroy the item (or drop it back into the world)
+		new_item.queue_free()
+		print("Inventory full or no space for item shape.")
+		# You could also emit a signal to show a temporary "Inventory Full" message
 
 func create_slot() -> void:
 	var new_slot = slot_scene.instantiate()
@@ -185,3 +196,63 @@ func discard_item():
 		currentSlot = null
 		canPlace = false
 		clear_grid()
+
+# Check if a specific item can be placed at a given slot
+func can_place_item_at_slot(slot: Slot, item: Item) -> bool:
+	for grid in item.item_grids:
+		var target_idx = slot.slot_ID + grid[0] + grid[1] * col_count
+		var line_switch_check = slot.slot_ID % col_count + grid[0]
+		
+		# Prevent wrapping around row edges
+		if line_switch_check < 0 or line_switch_check >= col_count:
+			return false
+		# Out of bounds
+		if target_idx < 0 or target_idx >= grid_array.size():
+			return false
+		# Slot already taken
+		if grid_array[target_idx].state == grid_array[target_idx].States.TAKEN:
+			return false
+	return true
+
+# Find the first slot where the item fits
+func find_valid_slot_for_item(item: Item) -> Slot:
+	for slot in grid_array:
+		if can_place_item_at_slot(slot, item):
+			return slot
+	return null
+
+# Place an item at a specific slot (no mouse interaction)
+func place_item_at_slot(slot: Slot, item: Item):
+	# Move item from root to the grid container so it belongs to the inventory
+	item.get_parent().remove_child(item)
+	grid_container.add_child(item)
+	
+	# Calculate anchor offsets (smallest x and y in the item's grid)
+	var anchor_x = 0
+	var anchor_y = 0
+	for grid in item.item_grids:
+		if grid[1] < anchor_x: anchor_x = grid[1]
+		if grid[0] < anchor_y: anchor_y = grid[0]
+	
+	# Determine which slot will be the visual anchor
+	var anchor_slot_idx = slot.slot_ID + anchor_x * col_count + anchor_y
+	var anchor_slot = grid_array[anchor_slot_idx]
+	
+	# Snap the item icon to that slot
+	item._snap_to(anchor_slot.global_position)
+	item.grid_anchor = anchor_slot
+	
+	# Mark all occupied slots as TAKEN
+	for grid in item.item_grids:
+		var target_idx = slot.slot_ID + grid[0] + grid[1] * col_count
+		grid_array[target_idx].state = grid_array[target_idx].States.TAKEN
+		grid_array[target_idx].item_stored = item
+
+
+func can_add_item(item_id: int) -> bool:
+	# Create a temporary dummy item just to get its grid shape
+	var dummy = item_scene.instantiate()
+	dummy.load_item(item_id)
+	var has_space = find_valid_slot_for_item(dummy) != null
+	dummy.queue_free()
+	return has_space
