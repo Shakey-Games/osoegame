@@ -2,11 +2,13 @@
 	"0": {
 	  "Name": "Pistol Ammo",
 	  "Value": 10,
-	  "Grid": "0,0"
+	  "Grid": "0,0",
+	  "Consumable": false
 	},
 	"1": {
 	  "Name": "Medkit",
 	  "Value": 20,
-	  "Grid": "0,0/1,0/1,-1"
+	  "Grid": "0,0/1,0/1,-1",
+	  "Consumable": true
 	}
 }

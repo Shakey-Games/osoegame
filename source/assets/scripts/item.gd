@@ -1,36 +1,37 @@
 extends Node2D
 
-var icon: TextureRect   # No @onready – we'll assign it manually
+var icon: TextureRect
 var item_ID: int
 var item_grids := []
 var selected = false
 var grid_anchor = null
+var is_consumable: bool = false   # <-- NEW
 
 func _ready() -> void:
-	# Ensure we have a reference to the icon node
 	if not icon:
 		icon = $Icon
 
 func load_item(a_itemID: int) -> void:
 	item_ID = a_itemID
-	
-	# Make sure icon reference exists (might be called before _ready)
 	if not icon:
 		icon = $Icon
 	
-	var iconPath = "res://source/assets/textures/itemIcons/" + DataHandler.item_data[str(a_itemID)]["Name"] + ".png"
+	var item_key = str(a_itemID)
+	var item_info = DataHandler.item_data[item_key]
 	
-	# Safety check: only assign if icon is valid
+	var iconPath = "res://source/assets/textures/itemIcons/" + item_info["Name"] + ".png"
 	if icon:
 		icon.texture = load(iconPath)
-	else:
-		print("ERROR: Icon node not found in Item scene!")
 	
-	for grid in DataHandler.item_grid_data[str(a_itemID)]:
+	# Load consumable flag
+	is_consumable = item_info.get("Consumable", false)
+	
+	for grid in DataHandler.item_grid_data[item_key]:
 		var converterArray := []
 		for i in grid:
 			converterArray.push_back(int(i))
 		item_grids.push_back(converterArray)
+
 
 func _process(delta: float) -> void:
 	if selected:

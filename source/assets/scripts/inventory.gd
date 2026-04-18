@@ -1,5 +1,8 @@
 extends Control
 
+var context_menu: PopupMenu
+var context_slot: Slot = null
+
 # Preload classes for type hints
 const Slot = preload("res://source/assets/scripts/slot.gd")
 const Item = preload("res://source/assets/scripts/item.gd")
@@ -22,6 +25,65 @@ func _ready() -> void:
 		create_slot()
 	EventBus.add_item.connect(add_item)
 	EventBus.register_inventory(self)
+	context_menu = PopupMenu.new()
+	add_child(context_menu)
+	context_menu.add_item("Consume", 0)
+	context_menu.id_pressed.connect(_on_context_menu_selected)
+	
+func _input(event: InputEvent) -> void:
+	if not visible:
+		return
+	
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		# Check if mouse is over a slot with an item
+		var mouse_pos = get_global_mouse_position()
+		for slot in grid_array:
+			if slot.get_global_rect().has_point(mouse_pos) and slot.item_stored:
+				_show_context_menu(slot, mouse_pos)
+				return
+		# If right-clicked elsewhere, hide menu
+		context_menu.hide()
+
+func _show_context_menu(slot: Slot, position: Vector2):
+	context_slot = slot
+	var item = slot.item_stored
+	if item.is_consumable:
+		context_menu.set_item_disabled(0, false)
+	else:
+		context_menu.set_item_disabled(0, true)
+	context_menu.position = position
+	context_menu.popup()
+
+func _on_context_menu_selected(id: int):
+	match id:
+		0:  # Consume
+			if context_slot and context_slot.item_stored:
+				_consume_item(context_slot.item_stored)
+	context_menu.hide()
+	context_slot = null
+	
+func _consume_item(item: Item):
+	var player = get_tree().get_first_node_in_group("player")
+	if not player:
+		return
+	
+	# Apply effect based on item ID (or data)
+	match item.item_ID:
+		1:  # Medkit
+			player.heal(50)  # Or read amount from data
+	
+	# Remove item from inventory grid
+	var slots_to_clear = []
+	for slot in grid_array:
+		if slot.item_stored == item:
+			slots_to_clear.append(slot)
+	
+	for slot in slots_to_clear:
+		slot.state = slot.States.FREE
+		slot.item_stored = null
+		slot.set_colour(slot.States.DEFAULT)
+	
+	item.queue_free()
 
 func _process(delta: float) -> void:
 	if itemHeld:

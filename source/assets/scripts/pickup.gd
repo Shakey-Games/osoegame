@@ -51,7 +51,7 @@ func pickup(player: Node):
 			player.add_ammo(pickup_data.amount)
 			EventBus.add_item.emit(inv_item_id)
 		PickupData.ItemType.HEALTH:
-			player.heal(pickup_data.amount)
+			#player.heal(pickup_data.amount)
 			EventBus.add_item.emit(inv_item_id)
 		PickupData.ItemType.SOUL:
 			player.add_soul(pickup_data.amount)
